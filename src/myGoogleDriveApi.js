@@ -10,12 +10,30 @@ const SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"];
 const pathToken = "data/token.json";
 const pathCredentials = "data/credentials.json";
 
-// Load client secrets from a local file.
-fs.readFile(pathCredentials, (err, content) => {
-	if (err) return console.log("Error loading client secret file:", err);
-	// Authorize a client with credentials, then call the Google Drive API.
-	authorize(JSON.parse(content), listFiles);
-});
+if (require.main === module) {
+	console.log("this is main.");
+
+	const authorized = runAuthorize();
+	if (!authorized) {
+		console.log("can't authorized.");
+		return;
+	} else {
+		console.log("authorized.");
+	}
+
+	// 後続処理
+}
+
+async function runAuthorize() {
+	// Load client secrets from a local file.
+
+	fs.readFile(pathCredentials, (err, content) => {
+		if (err) return console.log("Error loading client secret file:", err);
+		// Authorize a client with credentials, then call the Google Drive API.
+		authorize(JSON.parse(content), listFiles);
+	});
+	return true;
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
